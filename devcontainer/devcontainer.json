@@ -1,0 +1,30 @@
+{
+  "name": "Selenium DevContainer",
+  "image": "selenium/standalone-chrome:latest",
+
+  "runArgs": [
+    "--shm-size=2g", 
+    "--privileged"
+  ],
+
+  "overrideCommand": false,
+
+  "features": {
+    "ghcr.io/devcontainers/features/java:1": {
+      "version": "21"
+    },
+    "ghcr.io/devcontainers/features/git:1": {},
+    "ghcr.io/devcontainers/features/maven:1": {}
+  },
+
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "java.jdt.ls.java.home": "/usr/lib/jvm/msopenjdk-21"
+      },
+      "extensions": [
+        "vscjava.vscode-java-pack"
+      ]
+    }
+  }
+}
