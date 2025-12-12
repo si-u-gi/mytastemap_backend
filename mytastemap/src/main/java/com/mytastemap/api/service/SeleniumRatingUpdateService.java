@@ -1,18 +1,23 @@
 package com.mytastemap.api.service;
 
-import com.mytastemap.api.domain.Store;
-import com.mytastemap.api.repository.StoreRepository;
-import io.github.bonigarcia.wdm.WebDriverManager;
-import lombok.RequiredArgsConstructor;
-import org.openqa.selenium.*;
+import java.time.Duration;
+import java.util.List;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.TimeoutException;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.stereotype.Service;
 
-import java.time.Duration;
-import java.util.List;
+import com.mytastemap.api.domain.Store;
+import com.mytastemap.api.repository.StoreRepository;
+
+import io.github.bonigarcia.wdm.WebDriverManager;
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor

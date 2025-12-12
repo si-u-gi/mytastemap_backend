@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class GangnamAutoCrawler {
+public class AutoCrawler {
 
     private final KakaoLocationService kakaoLocationService;
     private final StoreRepository storeRepository;
@@ -17,14 +17,8 @@ public class GangnamAutoCrawler {
     private final ObjectMapper mapper = new ObjectMapper();
 
     // ✅ 강남구 전체 자동 수집 (학습용 수동 실행)
-    public void crawlGangnamAll() throws Exception {
-
-        double latStart = 37.4500;
-        double latEnd   = 37.5400;
-        double lngStart = 127.0000;
-        double lngEnd   = 127.1200;
-
-        double step = 0.01; // 약 1km
+    public void crawlAll(double latStart, double latEnd, double lngStart, double lngEnd, String DISTRICT_NAME) throws Exception {
+        double step = 0.0025; // 약 0.25km
 
         for (double lat = latStart; lat <= latEnd; lat += step) {
             for (double lng = lngStart; lng <= lngEnd; lng += step) {
@@ -53,6 +47,7 @@ public class GangnamAutoCrawler {
                     store.setLng(doc.get("x").asDouble());
                     store.setLat(doc.get("y").asDouble());
                     store.setPlaceUrl(doc.get("place_url").asText());
+                    store.setDistrict(DISTRICT_NAME);
 
                     storeRepository.save(store);
                 }
@@ -62,8 +57,6 @@ public class GangnamAutoCrawler {
             }
         }
 
-        System.out.println("✅ 강남구 전체 수집 완료");
+        System.out.println("수집 완료");
     }
-
-    
 }

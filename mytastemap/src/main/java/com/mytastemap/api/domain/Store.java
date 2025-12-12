@@ -25,4 +25,7 @@ public class Store {
     private String placeUrl;
     private Double rating;
     private Integer reviewCount;
+
+    @Column(length = 20)
+    private String district;
 }
