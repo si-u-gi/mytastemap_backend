@@ -1,30 +1,13 @@
 {
-  "name": "selenium-only",
-
-  // Selenium + Chrome + WebDriver 전용 이미지
+  "name": "Selenium DevContainer",
   "image": "selenium/standalone-chrome:latest",
-
-  // Chrome 안정성 필수 옵션
   "runArgs": [
     "--shm-size=2g"
   ],
-
   "overrideCommand": false,
-
-  // Docker 컨테이너(Java/MySQL)를 띄우기 위해 필요
   "features": {
-    "ghcr.io/devcontainers/features/docker-in-docker:2": {}
-  },
-
-  // VS Code는 최소만
-  "customizations": {
-    "vscode": {
-      "extensions": [
-        "vscjava.vscode-java-pack"
-      ]
+    "ghcr.io/devcontainers/features/java:1": {
+      "version": "17"
     }
-  },
-
-  // selenium 이미지는 root 권한이 안전
-  "remoteUser": "root"
+  }
 }
