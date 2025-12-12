@@ -26,11 +26,14 @@ sudo apt update
 sudo apt install -y openjdk-17-jdk
 export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
 export PATH="$JAVA_HOME/bin:$PATH"
+source ~/.bashrc
 hash -r
 echo "org.gradle.java.home=/usr/lib/jvm/java-17-openjdk-amd64" > gradle.properties
 java -version
 ./gradlew --stop
 ./gradlew -version
+
+
 
 
 
@@ -40,11 +43,9 @@ java -jar mytastemap-0.0.1-SNAPSHOT.jar
 
 https://animated-space-doodle-69x64p4766jwc5w55-8080.app.github.dev/location/stores?lat=37.4979&lng=127.0276
 
-https://ideal-palm-tree-5g76x9xp665724xq-8080.app.github.dev/admin/crawl/gangnam
-https://ideal-palm-tree-5g76x9xp665724xq-8080.app.github.dev/admin/update/ratings
-https://ideal-palm-tree-5g76x9xp665724xq-8080.app.github.dev/admin/update/ratings/selenium
 
-https://ideal-palm-tree-5g76x9xp665724xq-8080.app.github.dev/admin/crawl/yeongdeungpo
+https://friendly-yodel-5g76x9xp675wcw5g-8080.app.github.dev/admin/crawl/yeongdeungpo
+https://friendly-yodel-5g76x9xp675wcw5g-8080.app.github.dev/admin/update/ratings/selenium
 
 
 평점 4.x 이상 리뷰 개수 10개 이상 찾기??
