@@ -1,19 +1,4 @@
 {
   "java.compile.nullAnalysis.mode": "automatic",
-  "java.configuration.updateBuildConfiguration": "interactive",
-
-  // ▶ Gradle / Spring Boot 빌드 & 실행: Java 17
-  "java.import.gradle.java.home": "/usr/local/sdkman/candidates/java/17.0.17-ms",
-
-  // ▶ Java Language Server도 Java 17 사용
-  "java.jdt.ls.java.home": "/usr/local/sdkman/candidates/java/17.0.17-ms",
-
-  // ▶ 명시적 런타임 정의
-  "java.configuration.runtimes": [
-    {
-      "name": "JavaSE-17",
-      "path": "/usr/local/sdkman/candidates/java/17.0.17-ms",
-      "default": true
-    }
-  ]
+  "java.configuration.updateBuildConfiguration": "interactive"
 }

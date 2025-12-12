@@ -1,8 +1,38 @@
-sudo mkdir -p /var/run/mysqld
-sudo chown mysql:mysql /var/run/mysqld
-sudo chmod 755 /var/run/mysqld
-sudo service mysql start
-mysql -u root -p
+MySQL을 Docker 컨테이너로 설치 (데이터 영구)
+MySQL 데이터용 Volume (최초 1회)
+docker volume create mytastemap-mysql-data
+
+MySQL 컨테이너 실행 (최초 1회)
+docker run -d \
+  --name mytastemap-mysql \
+  -e MYSQL_ROOT_PASSWORD=1234 \
+  -e MYSQL_DATABASE=mytastemap \
+  -p 3306:3306 \
+  -v mytastemap-mysql-data:/var/lib/mysql \
+  mysql:8.0
+
+접속
+docker exec -it mytastemap-mysql mysql -u root -p
+
+비밀번호: 1234
+
+extension
+  Extension Pack for Java
+  Spring Boot Extension Pack
+  MySQL
+
+Java 17
+sudo apt update
+sudo apt install -y openjdk-17-jdk
+export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
+export PATH="$JAVA_HOME/bin:$PATH"
+hash -r
+echo "org.gradle.java.home=/usr/lib/jvm/java-17-openjdk-amd64" > gradle.properties
+java -version
+./gradlew --stop
+./gradlew -version
+
+
 
 ./gradlew clean build
 cd build/libs
