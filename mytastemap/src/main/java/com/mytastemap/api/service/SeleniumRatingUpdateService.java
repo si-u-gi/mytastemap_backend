@@ -2,7 +2,6 @@ package com.mytastemap.api.service;
 
 import java.time.Duration;
 import java.util.List;
-
 import org.openqa.selenium.By;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
@@ -12,18 +11,15 @@ import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.stereotype.Service;
-
 import com.mytastemap.api.domain.Store;
-import com.mytastemap.api.repository.StoreRepository;
-
 import io.github.bonigarcia.wdm.WebDriverManager;
-import lombok.RequiredArgsConstructor;
 
 @Service
-@RequiredArgsConstructor
 public class SeleniumRatingUpdateService {
-
-    private final StoreRepository storeRepository;
+    private final StoreService storeService;
+    public SeleniumRatingUpdateService(StoreService storeService) {
+        this.storeService = storeService;
+    }
 
     public void updateAllRatingsWithSelenium() {
 
@@ -43,7 +39,7 @@ public class SeleniumRatingUpdateService {
         WebDriver driver = new ChromeDriver(options);
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
 
-        List<Store> stores = storeRepository.findAll();
+        List<Store> stores = storeService.findStores();
         System.out.println("✅ 대상 가게 수: " + stores.size());
 
         int success = 0;
@@ -82,7 +78,7 @@ public class SeleniumRatingUpdateService {
 
                 store.setRating(rating);
                 store.setReviewCount(reviewCount);
-                storeRepository.save(store);
+                storeService.save(store);
 
                 success++;
                 System.out.println("✅ 저장 완료: " + store.getName()

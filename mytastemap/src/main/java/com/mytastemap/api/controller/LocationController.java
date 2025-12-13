@@ -1,30 +1,38 @@
 package com.mytastemap.api.controller;
 
-import org.springframework.http.ResponseEntity;
+import java.util.List;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import com.mytastemap.api.service.KakaoLocationService;
-
-import lombok.RequiredArgsConstructor;
+import com.mytastemap.api.dto.StoreDto;
+import com.mytastemap.api.service.StoreService;
 
 @RestController
-@RequiredArgsConstructor
 @RequestMapping("/location")
 @CrossOrigin(origins = "*") // ✅ Flutter, WebView 모두 허용
 public class LocationController {
+    private final StoreService storeService;
+    public LocationController(StoreService storeService) {
+        this.storeService = storeService;
+    }
 
-    private final KakaoLocationService kakaoLocationService;
-
+    // GET /stores?minRating=4.5&minReview=100
     @GetMapping("/stores")
-    public ResponseEntity<String> getNearbyStores(
-            @RequestParam double lat,
-            @RequestParam double lng
+    public List<StoreDto> getStores(
+        @RequestParam(required = false) Double minRating,
+        @RequestParam(required = false) Integer minReview
     ) {
-        String result = kakaoLocationService.searchNearbyStores(lat, lng);
-        return ResponseEntity.ok(result); // ✅ JSON 그대로 반환
+        // 서비스 → 엔티티 목록 조회
+        // stream() → 처리 시작
+        // map(StoreDto::from) → DTO 변환
+        // toList() → 반환
+
+        return 
+            storeService.getStoresByMinRatingAndReviews(minRating, minReview)
+            .stream()
+            .map(StoreDto::from)
+            .toList();
     }
 }

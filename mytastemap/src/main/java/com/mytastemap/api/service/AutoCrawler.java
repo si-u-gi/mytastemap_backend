@@ -3,16 +3,18 @@ package com.mytastemap.api.service;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mytastemap.api.domain.Store;
-import com.mytastemap.api.repository.StoreRepository;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
-@RequiredArgsConstructor
 public class AutoCrawler {
 
     private final KakaoLocationService kakaoLocationService;
-    private final StoreRepository storeRepository;
+    private final StoreService storeService;
+
+    public AutoCrawler(KakaoLocationService kakaoLocationService, StoreService storeService) {
+        this.kakaoLocationService = kakaoLocationService;
+        this.storeService = storeService;
+    }
 
     private final ObjectMapper mapper = new ObjectMapper();
 
@@ -35,7 +37,7 @@ public class AutoCrawler {
                     String kakaoId = doc.get("id").asText();
 
                     // ✅ 이미 저장된 가게는 스킵
-                    if (storeRepository.existsById(kakaoId)) continue;
+                    if (storeService.existsById(kakaoId)) continue;
 
                     Store store = new Store();
                     store.setKakaoId(kakaoId);
@@ -49,7 +51,7 @@ public class AutoCrawler {
                     store.setPlaceUrl(doc.get("place_url").asText());
                     store.setDistrict(DISTRICT_NAME);
 
-                    storeRepository.save(store);
+                    storeService.save(store);
                 }
 
                 // ✅ 카카오 API 과호출 방지 (필수)
