@@ -7,7 +7,7 @@
     content="width=device-width, initial-scale=1.0, maximum-scale=1.0"
   />
 
-  <!-- ✅ 카카오맵 JS SDK -->
+  <!-- ✅ 카카오맵 -->
   <script src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=28d73fe896f3bb8829428aac2c341cf7&autoload=false"></script>
 
   <style>
@@ -45,33 +45,25 @@
       font-size: 14px;
     }
 
+    /* ✅ 반응형 필터 박스 */
     #filter-box {
       position: absolute;
-      top: 10px;
-      left: 10px;
+      top: 12px;
+      left: 12px;
       z-index: 10;
-
       background: white;
-      padding: 10px 12px;
-      border-radius: 6px;
+      padding: 10px;
+      border-radius: 8px;
       font-size: 13px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
-      pointer-events: auto;
-    }
-
-    #filter-box input,
-    #filter-box button {
-      user-select: text;
-      pointer-events: auto;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.25);
     }
 
     #filter-box input {
-      width: 50px;
-      margin: 0 5px;
+      width: 48px;
     }
 
     #filter-box button {
-      margin-left: 5px;
+      margin-left: 6px;
       padding: 4px 10px;
       background: #4CAF50;
       color: white;
@@ -84,8 +76,8 @@
       padding: 4px;
       font-size: 11px;
       border-radius: 4px;
-      text-align: center;
       white-space: nowrap;
+      text-align: center;
     }
   </style>
 </head>
@@ -98,6 +90,7 @@
       ⭐ ≥ <input id="minRating" type="number" step="0.1" value="0">
       📝 ≥ <input id="minReview" type="number" value="0">
       <button onclick="applyFilter()">적용</button>
+      <button onclick="locateMe()">📍</button>
     </div>
 
     <div id="map"></div>
@@ -109,8 +102,9 @@
     let overlays = [];
     let allStores = [];
     let mapReady = false;
+    let myMarker = null;
 
-    // ✅ 카카오맵 안전 초기화 (iOS 필수)
+    /* ✅ 카카오맵 초기화 (iOS 필수 패턴) */
     kakao.maps.load(() => {
       map = new kakao.maps.Map(document.getElementById('map'), {
         center: new kakao.maps.LatLng(37.4979, 127.0276),
@@ -119,28 +113,30 @@
 
       mapReady = true;
       document.getElementById('loading').style.display = 'none';
+
+      locateMe(); // 🔥 지도 로드 후 내 위치
     });
 
-    // ✅ Flutter → JS
+    /* ✅ Flutter → JS */
     function drawMarkers(stores) {
       if (!mapReady) return;
 
       allStores = stores;
-      render(stores.slice(0, 150)); // 🔥 모바일 성능 제한
+      render(stores.slice(0, 120)); // 🔥 모바일 성능 최적화
     }
 
     function render(stores) {
       clearAll();
 
       stores.forEach(store => {
-        const position = new kakao.maps.LatLng(store.lat, store.lng);
+        const pos = new kakao.maps.LatLng(store.lat, store.lng);
 
-        const marker = new kakao.maps.Marker({ position });
+        const marker = new kakao.maps.Marker({ position: pos });
         marker.setMap(map);
         markers.push(marker);
 
         const overlay = new kakao.maps.CustomOverlay({
-          position,
+          position: pos,
           yAnchor: 1.6,
           content: `
             <div class="marker-label">
@@ -163,15 +159,45 @@
     }
 
     function applyFilter() {
-      const minRating = Number(document.getElementById('minRating').value);
-      const minReview = Number(document.getElementById('minReview').value);
+      const minRating = Number(minRating.value);
+      const minReview = Number(minReview.value);
 
-      const filtered = allStores.filter(s =>
-        (s.rating ?? 0) >= minRating &&
-        (s.reviewCount ?? 0) >= minReview
+      render(
+        allStores.filter(s =>
+          (s.rating ?? 0) >= minRating &&
+          (s.reviewCount ?? 0) >= minReview
+        ).slice(0, 120)
       );
+    }
 
-      render(filtered);
+    /* ✅ 내 위치 표시 */
+    function locateMe() {
+      if (!navigator.geolocation) return;
+
+      navigator.geolocation.getCurrentPosition(
+        pos => {
+          const latlng = new kakao.maps.LatLng(
+            pos.coords.latitude,
+            pos.coords.longitude
+          );
+
+          map.setCenter(latlng);
+
+          if (myMarker) myMarker.setMap(null);
+
+          myMarker = new kakao.maps.Marker({
+            position: latlng,
+            image: new kakao.maps.MarkerImage(
+              "https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/markerStar.png",
+              new kakao.maps.Size(24, 35)
+            )
+          });
+
+          myMarker.setMap(map);
+        },
+        err => console.log("위치 실패", err),
+        { enableHighAccuracy: true, timeout: 8000 }
+      );
     }
   </script>
 </body>
