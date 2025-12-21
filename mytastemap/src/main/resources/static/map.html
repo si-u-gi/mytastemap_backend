@@ -2,12 +2,13 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0"
+  />
 
-  <!-- ✅ 카카오맵 JS SDK (반드시 필요) -->
-  <script
-    src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=28d73fe896f3bb8829428aac2c341cf7"
-  ></script>
+  <!-- ✅ 카카오맵 JS SDK -->
+  <script src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=YOUR_KAKAO_KEY&autoload=false"></script>
 
   <style>
     * {
@@ -19,6 +20,11 @@
     html, body {
       margin: 0;
       padding: 0;
+      height: 100%;
+    }
+
+    #map-wrapper {
+      position: relative;
       width: 100%;
       height: 100%;
     }
@@ -28,13 +34,25 @@
       height: 100%;
     }
 
+    #loading {
+      position: absolute;
+      inset: 0;
+      background: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 20;
+      font-size: 14px;
+    }
+
     #filter-box {
       position: absolute;
       top: 10px;
       left: 10px;
+      z-index: 10;
+
       background: white;
       padding: 10px 12px;
-      z-index: 9999;
       border-radius: 6px;
       font-size: 13px;
       box-shadow: 0 2px 6px rgba(0,0,0,0.3);
@@ -47,6 +65,11 @@
       pointer-events: auto;
     }
 
+    #filter-box input {
+      width: 50px;
+      margin: 0 5px;
+    }
+
     #filter-box button {
       margin-left: 5px;
       padding: 4px 10px;
@@ -54,15 +77,6 @@
       color: white;
       border: none;
       border-radius: 4px;
-      cursor: pointer;
-    }
-
-    #filter-box input {
-      width: 50px;
-      padding: 2px 4px;
-      border: 1px solid #ddd;
-      border-radius: 3px;
-      margin: 0 5px;
     }
 
     .marker-label {
@@ -77,32 +91,42 @@
 </head>
 
 <body>
-  <div id="filter-box">
-    ⭐ ≥ <input id="minRating" type="number" step="0.1" value="0">
-    📝 ≥ <input id="minReview" type="number" value="0">
-    <button onclick="applyFilter()">적용</button>
-  </div>
+  <div id="map-wrapper">
+    <div id="loading">지도 불러오는 중…</div>
 
-  <div id="map"></div>
+    <div id="filter-box">
+      ⭐ ≥ <input id="minRating" type="number" step="0.1" value="0">
+      📝 ≥ <input id="minReview" type="number" value="0">
+      <button onclick="applyFilter()">적용</button>
+    </div>
+
+    <div id="map"></div>
+  </div>
 
   <script>
     let map;
     let markers = [];
     let overlays = [];
     let allStores = [];
+    let mapReady = false;
 
-    // ✅ 지도 초기화 (중요)
-    window.onload = () => {
+    // ✅ 카카오맵 안전 초기화 (iOS 필수)
+    kakao.maps.load(() => {
       map = new kakao.maps.Map(document.getElementById('map'), {
         center: new kakao.maps.LatLng(37.4979, 127.0276),
         level: 4
       });
-    };
 
-    // ✅ Flutter → JS 호출용
+      mapReady = true;
+      document.getElementById('loading').style.display = 'none';
+    });
+
+    // ✅ Flutter → JS
     function drawMarkers(stores) {
+      if (!mapReady) return;
+
       allStores = stores;
-      render(stores);
+      render(stores.slice(0, 150)); // 🔥 모바일 성능 제한
     }
 
     function render(stores) {
@@ -117,13 +141,13 @@
 
         const overlay = new kakao.maps.CustomOverlay({
           position,
+          yAnchor: 1.6,
           content: `
             <div class="marker-label">
               <b>${store.name}</b><br/>
               ⭐ ${store.rating ?? 0} · 📝 ${store.reviewCount ?? 0}
             </div>
-          `,
-          yAnchor: 1.6
+          `
         });
 
         overlay.setMap(map);
@@ -149,16 +173,6 @@
 
       render(filtered);
     }
-
-    window.onload = () => {
-    map = new kakao.maps.Map(
-        document.getElementById('map'),
-        {
-        center: new kakao.maps.LatLng(37.4979, 127.0276),
-        level: 4
-        }
-    );
-    };
   </script>
 </body>
 </html>
